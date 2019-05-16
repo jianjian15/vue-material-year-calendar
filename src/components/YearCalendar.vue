@@ -177,7 +177,6 @@ export default {
         dateIndex = this.activeDates.indexOf(this.activeDates.find((i) => i.date === activeDate))
         newDates = this.modifiedActiveDates(dateIndex, oDate)
       }
-      console.log(newDates);
       this.$emit('update:activeDates', newDates)
     },
     monthList(curYear){
