@@ -28,7 +28,7 @@ export default {
       type: Array,
       default: () => []
     },
-      month: {
+    month: {
       type: [String, Number],
       default: () => dayjs().month() + 1
     },
@@ -69,12 +69,12 @@ export default {
         zh: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
         en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         pt: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
-      };
+      }
       const yearMapping = {
-        zh: "年",
-        en: "-",
-        pt: "-"
-      };
+        zh: '年',
+        en: '-',
+        pt: '-'
+      }
       return this.year + yearMapping[this.lang] + monthMapping[this.lang][this.month - 1]
     }
   },
@@ -103,7 +103,6 @@ export default {
           }
         })
       this.showDays = fullCol
-
       // 把 toggleDate 的內容合併在 initCalendar 裡。
       this.activeDates.forEach(date => {
         let oDate
@@ -137,6 +136,7 @@ export default {
     toggleDay (dayObj) {
       if (dayObj.isOtherMonth) return
       this.$emit('toggleDate', {
+        year: this.year,
         month: this.month,
         date: dayObj.value,
         selected: !dayObj.active,

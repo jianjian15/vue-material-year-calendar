@@ -8,7 +8,7 @@
         :key="`year-${cur}-month-${n}`"
         :year="cur"
         :month="n"
-        :activeDates="month[n]"
+        :activeDates="month[cur + '-' + n]"
         :activeClass="activeClass"
         @toggleDate="toggleDate"
         :lang="lang"
@@ -116,16 +116,16 @@ export default {
           }
         }
 
-        if (dayjs(oDate.date).year() !== this.value) return // 讓2020年1月的資料，不會放到 2019年的1月資料裡
+        let y = dayjs(oDate.date).year().toString();
         let m = (dayjs(oDate.date).month() + 1).toString()
-        if (!month[m]) month[m] = []
-        month[m].push(oDate)
-      })
+        let key = y + "-" + m;
+        if(!month[key]) month[key] = [];
+        month[key].push(oDate)
+      });
       return month
     },
     yearList(){
       const list = [];
-//      console.log(this.startDate);
       if(this.startDate && this.endDate) {
         let startDayJs = new dayjs(this.startDate);
         let endDayJs = new dayjs(this.endDate);
@@ -152,7 +152,7 @@ export default {
     },
     toggleDate (dateObj) {
       const activeDate = dayjs()
-        .set('year', this.value)
+        .set('year', dateObj.year)
         .set('month', dateObj.month - 1)
         .set('date', dateObj.date)
         .format('YYYY-MM-DD')
@@ -177,11 +177,12 @@ export default {
         dateIndex = this.activeDates.indexOf(this.activeDates.find((i) => i.date === activeDate))
         newDates = this.modifiedActiveDates(dateIndex, oDate)
       }
+      console.log(newDates);
       this.$emit('update:activeDates', newDates)
     },
     monthList(curYear){
       const monthList = [];
-//      console.log(this.startDate);
+
       if(this.startDate && this.endDate) {
         let startDayJs = new dayjs(this.startDate);
         let endDayJs = new dayjs(this.endDate);
@@ -195,7 +196,6 @@ export default {
         startMonth = curYear === startYear ? startMonth : 1;
         //结束年和当前要计算的年不是同一年就从11结束
         endMonth = curYear === endYear ? endMonth : 12;
-        console.log(startMonth + "-" + endMonth);
 
         for(let i = startMonth; i <= endMonth; i++){
           monthList.push(i);
