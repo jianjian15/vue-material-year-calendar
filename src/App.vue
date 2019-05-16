@@ -1,33 +1,14 @@
 <template>
   <div id="app">
-    <button @click="add_sat_and_sun_of_year">Add weekend</button>
-    <button @click="remove_sat_and_sun_of_year">Remove weekend</button>
-    <select v-model="lang">
-      <option value="tw">繁體中文</option>
-      <option value="en">English</option>
-      <option value="pt">Português</option>
-    </select>
-
-    <select v-model="activeClass">
-      <option selected value="">(none)</option>
-      <option value="red">red</option>
-      <option value="blue">blue</option>
-      <option value="your_customized_classname">your_customized_classname</option>
-    </select>
-
-    <label for="">
-      Show years selector?
-      <input type="checkbox" v-model="showYearSelector" >
-    </label>
-
     <year-calendar
       v-model="year"
+      :startDate="'2019-02-03'"
+      :endDate="'2020-05-03'"
       :activeDates.sync="activeDates"
       @toggleDate="toggleDate"
       :lang="lang"
       prefixClass="your_customized_wrapper_class"
       :activeClass="activeClass"
-      :showYearSelector="showYearSelector"
     ></year-calendar>
   </div>
 </template>
@@ -43,7 +24,7 @@ export default {
   },
   data () {
     return {
-      lang: 'en', // 'en', 'tw', 'pt'
+      lang: 'zh', // 'en', 'tw', 'pt'
       year: 2019,
       activeDates: [
         { date: '2019-02-13' },
@@ -57,7 +38,8 @@ export default {
   },
   methods: {
     toggleDate (dateInfo) {
-      console.log(dateInfo)
+//      console.log(dateInfo)
+//      console.log(this.activeDates);
     },
     add_sat_and_sun_of_year () {
       let theDate = dayjs(`${this.year}-01-01`)

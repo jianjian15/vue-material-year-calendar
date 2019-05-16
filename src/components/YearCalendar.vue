@@ -1,23 +1,12 @@
 <template>
   <div class="vue-calendar__container">
-    <div v-if="showYearSelector" class="container__year">
-      <!-- <span><button @click="addYear(-1)">back</button></span> -->
-      <span
-        v-for="i in 5"
-        :key="i"
-        class="year__chooser"
-        @click="changeYear(i)"
-      >
-        {{ i + activeYear - 3 }}
-      </span>
-      <!-- <span><button @click="addYear(1)">next</button></span> -->
-    </div>
-    <div class="container__months">
+
+    <div class="container__months" v-for="cur in yearList">
       <month-calendar
         class="container__month"
-        v-for="n in 12"
-        :key="`month-${n}`"
-        :year="activeYear"
+        v-for="n in monthList(cur)"
+        :key="`year-${cur}-month-${n}`"
+        :year="cur"
         :month="n"
         :activeDates="month[n]"
         :activeClass="activeClass"
@@ -70,7 +59,7 @@ export default {
           let monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
           if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) monthLength[1] = 29
           if (!(day > 0 && day <= monthLength[month - 1])) isGood = false
-        })
+        });
         return isGood
       }
     },
@@ -78,6 +67,12 @@ export default {
     value: {
       type: [String, Number],
       default: dayjs().year()
+    },
+    startDate: {
+      type: [String]
+    },
+    endDate: {
+      type: [String]
     },
     lang: {
       type: String,
@@ -94,7 +89,9 @@ export default {
   },
   data () {
     return {
-      isUsingString: true
+      isUsingString: true,
+      startYear: null,
+      endYear: null
     }
   },
   components: {
@@ -125,6 +122,20 @@ export default {
         month[m].push(oDate)
       })
       return month
+    },
+    yearList(){
+      const list = [];
+//      console.log(this.startDate);
+      if(this.startDate && this.endDate) {
+        let startDayJs = new dayjs(this.startDate);
+        let endDayJs = new dayjs(this.endDate);
+        let startYear = startDayJs.year();
+        let endYear = endDayJs.year();
+        for(let i = startYear; i <= endYear; i++){
+          list.push(i);
+        }
+      }
+      return list;
     },
     activeYear: {
       get () {
@@ -168,6 +179,31 @@ export default {
       }
       this.$emit('update:activeDates', newDates)
     },
+    monthList(curYear){
+      const monthList = [];
+//      console.log(this.startDate);
+      if(this.startDate && this.endDate) {
+        let startDayJs = new dayjs(this.startDate);
+        let endDayJs = new dayjs(this.endDate);
+        //是同一年就是
+        let startYear = startDayJs.year();
+        let endYear = endDayJs.year();
+        let startMonth = startDayJs.month() + 1;
+        let endMonth = endDayJs.month() + 1;
+
+        //开始年和当前要计算的年不是同一年就从0开始
+        startMonth = curYear === startYear ? startMonth : 1;
+        //结束年和当前要计算的年不是同一年就从11结束
+        endMonth = curYear === endYear ? endMonth : 12;
+        console.log(startMonth + "-" + endMonth);
+
+        for(let i = startMonth; i <= endMonth; i++){
+          monthList.push(i);
+        }
+      }
+
+      return monthList;
+    },
     modifiedActiveDates (dateIndex, activeDate) {
       let newDates = [...this.activeDates]
       if (dateIndex === -1) {
@@ -176,6 +212,18 @@ export default {
         newDates.splice(dateIndex, 1)
       }
       return newDates
+    }
+  },
+  mounted () {
+    if(this.startDate) {
+      let startDayJs = new dayjs(this.startDate);
+      let endDayJs = new dayjs(this.endDate);
+      //是同一年就是
+      this.startYear = startDayJs.year();
+      this.endYear = endDayJs.year();
+    }
+    else {
+      this.endYear = this.startYear = datajs().year();
     }
   },
   created () {
